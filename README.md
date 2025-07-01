@@ -1,0 +1,1 @@
+Core logic and API abstraction for enriching Firefly III transactions.
