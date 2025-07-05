@@ -1,4 +1,4 @@
-"""Moduł dopasowujący transakcje bankowe do danych z Firefly."""
+"""Match bank transactions with records retrieved from Firefly."""
 from datetime import datetime
 
 
