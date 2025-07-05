@@ -1,5 +1,4 @@
 # Firefly III Enricher Core
-
 [![Python package](https://github.com/wini83/fireflyiii-enricher-core/actions/workflows/python-package.yml/badge.svg)](https://github.com/wini83/fireflyiii-enricher-core/actions/workflows/python-package.yml)
 
 Firefly III Enricher Core is a lightweight library for retrieving and updating
