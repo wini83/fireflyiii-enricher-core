@@ -1,9 +1,7 @@
-"""Moduł do obsługi Firefly III API."""
 import requests
 import logging
 
 logger = logging.getLogger(__name__)
-
 
 class FireflyClient:
     def __init__(self, base_url, headers):
@@ -11,7 +9,6 @@ class FireflyClient:
         self.headers = headers
 
     def fetch_transactions(self, tx_type="withdrawal", limit=1000):
-        logger.info("Pobieranie transakcji typu '%s' z Firefly...", tx_type)
         url = f"{self.base_url}/api/v1/transactions"
         params = {"limit": limit, "type": tx_type}
         page = 1
@@ -22,25 +19,23 @@ class FireflyClient:
             response = requests.get(url, headers=self.headers, params=params, timeout=10)
             response.raise_for_status()
             data = response.json()
-
             transactions.extend(data["data"])
-
             if not data["links"].get("next"):
                 break
             page += 1
-
         return transactions
 
     def filter_single_part(self, transactions):
         return [
-            t for t in transactions if len(t["attributes"]["transactions"]) == 1
+            t for t in transactions
+            if len(t["attributes"]["transactions"]) == 1
         ]
 
     def filter_without_category(self, transactions):
         return [
             t for t in transactions
-            if t["attributes"]["transactions"][0].get("relationships", {})
-            .get("category", {}).get("data") is None
+            if t["attributes"]["transactions"][0]
+               .get("relationships", {}).get("category", {}).get("data") is None
         ]
 
     def filter_by_description(self, transactions, description_filter, exact_match=True):
@@ -54,18 +49,24 @@ class FireflyClient:
         return filtered
 
     def simplify_transactions(self, transactions):
-        return [{
-            "id": t["id"],
-            "description": t["attributes"]["transactions"][0]["description"],
-            "amount": t["attributes"]["transactions"][0]["amount"],
-            "date": t["attributes"]["transactions"][0]["date"]
-        } for t in transactions]
+        simplified = []
+        for t in transactions:
+            sub = t["attributes"]["transactions"][0]
+            simplified.append({
+                "id": t["id"],
+                "description": sub["description"],
+                "amount": sub["amount"],
+                "date": sub["date"]
+            })
+        return simplified
 
     def update_transaction_description(self, transaction_id, new_description):
         url = f"{self.base_url}/api/v1/transactions/{transaction_id}"
-        response = requests.get(url, headers=self.headers, timeout=10)
-        if response.status_code != 200:
-            logger.error("Nie udało się pobrać transakcji %s", transaction_id)
+        try:
+            response = requests.get(url, headers=self.headers, timeout=10)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            logger.error(f"Nie udało się pobrać transakcji {transaction_id}: {e}")
             return
 
         payload = {
@@ -74,9 +75,40 @@ class FireflyClient:
             "transactions": [{"description": new_description}]
         }
 
-        put_response = requests.put(url, headers=self.headers, json=payload, timeout=10)
-        if put_response.status_code == 200:
-            logger.info("Zaktualizowano opis transakcji %s", transaction_id)
+        try:
+            response = requests.put(url, headers=self.headers, json=payload, timeout=10)
+            response.raise_for_status()
+            logger.info(f"Zaktualizowano opis transakcji {transaction_id}")
+        except requests.RequestException as e:
+            logger.error(f"Błąd aktualizacji {transaction_id}: {e}")
+
+    def update_transaction_notes(self, transaction_id, new_notes):
+        url = f"{self.base_url}/api/v1/transactions/{transaction_id}"
+        response = requests.get(url, headers=self.headers, timeout=10)
+        if response.status_code != 200:
+            logger.error(f"Nie udało się pobrać transakcji {transaction_id}")
+            return
+        existing_data = response.json()
+        old_description = existing_data.get("data", {}).get("attributes", {}).get("description", "")
+        payload = {
+            "apply_rules": True,
+            "fire_webhooks": True,
+            "transactions": [{
+                "description": old_description,
+                "notes": new_notes
+            }]
+        }
+        response = requests.put(url, headers=self.headers, json=payload, timeout=10)
+        if response.status_code == 200:
+            logger.info(f"Zaktualizowano notatki transakcji {transaction_id}")
         else:
-            logger.error("Błąd aktualizacji %s: %s - %s",
-                         transaction_id, put_response.status_code, put_response.text)
+            logger.error(f"Błąd aktualizacji notatek {transaction_id}: {response.status_code} - {response.text}")
+
+    def add_tag_to_transaction(self, transaction_id, tag_id):
+        url = f"{self.base_url}/api/v1/transactions/{transaction_id}/tags"
+        payload = {"tags": [str(tag_id)]}
+        response = requests.post(url, headers=self.headers, json=payload, timeout=10)
+        if response.status_code == 200:
+            logger.info(f"Dodano tag {tag_id} do transakcji {transaction_id}")
+        else:
+            logger.error(f"Błąd dodania tagu {tag_id} do transakcji {transaction_id}: {response.status_code} - {response.text}")
