@@ -1,10 +1,13 @@
-"""Moduł dopasowujący transakcje bankowe do danych z Firefly."""
+"""Match bank transactions with records retrieved from Firefly."""
 from datetime import datetime
 
 
 class TransactionMatcher:
+    """Helper for aligning CSV records with Firefly transactions."""
+
     @staticmethod
     def match(tx, records):
+        """Return CSV records that correspond to the provided transaction."""
         firefly_date = datetime.fromisoformat(tx["date"]).date()
         firefly_amount = float(tx["amount"])
         matches = []
