@@ -14,11 +14,7 @@ load_dotenv()
 # Initialize Firefly III client with demo credentials
 firefly = FireflyClient(
     base_url=os.getenv("FIREFLY_URL"),
-    headers={
-        "Authorization": f"Bearer {os.getenv('FIREFLY_TOKEN')}",
-        "Accept": "application/vnd.api+json",
-        "Content-Type": "application/vnd.api+json"
-    }
+    token=os.getenv('FIREFLY_TOKEN')
 )
 
 # Fetch, filter and simplify transactions

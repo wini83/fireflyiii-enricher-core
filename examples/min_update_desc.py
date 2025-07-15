@@ -1,3 +1,4 @@
+# pylint: disable=duplicate-code
 """Demonstrate minimal usage of :class:`FireflyClient`. editing notes"""
 
 import os
@@ -5,7 +6,6 @@ import json
 
 from dotenv import load_dotenv
 from fireflyiii_enricher_core.firefly_client import FireflyClient
-
 
 # Load environment variables from .env.example file
 load_dotenv()
@@ -17,6 +17,5 @@ firefly = FireflyClient(
 )
 
 TX_ID = 3896
-response =  firefly.add_tag_to_transaction(TX_ID, "test tag#3")
-
+response =  firefly.update_transaction_description(TX_ID, "BLIK - płatność w internecie")
 print(json.dumps(response, indent=2, ensure_ascii=False))
