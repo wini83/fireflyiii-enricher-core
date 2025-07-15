@@ -13,6 +13,7 @@ HEADERS = {"Authorization": "Bearer test-token"}
 def fake_response(status_code=200, json_data=None):
     """Return a minimal fake response object used for mocking."""
     class FakeResponse:
+        """Minimal fake response object used for mocking."""
         def __init__(self):
             self.status_code = status_code
             self._json = json_data or {}
