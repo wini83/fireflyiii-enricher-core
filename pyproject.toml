@@ -6,9 +6,9 @@ authors = [{ name = "WiNi83", email = "rico.gotti@gmail.com" }]
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.8"
+
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent"
 ]
 
