@@ -2,9 +2,16 @@
 name = "fireflyiii-enricher-core"
 version = "0.1.0"
 description = "A core library for enriching Firefly III transactions"
-authors = [{ name="WiNi83", email="rico.gotti@gmail.com" }]
+authors = [{ name = "WiNi83", email = "rico.gotti@gmail.com" }]
 readme = "README.md"
-license = { file="LICENSE" }
+license = "MIT"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+
 dependencies = [
     "requests",
     "python-dotenv"
@@ -16,4 +23,3 @@ dev = ["pytest"]
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
-
