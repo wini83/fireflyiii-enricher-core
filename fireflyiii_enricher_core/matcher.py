@@ -20,7 +20,8 @@ class TransactionMatcher:
         for record in records:
             csv_date = datetime.strptime(record["date"], "%d-%m-%Y").date()
             csv_amount = float(record["amount"])
-            if csv_date == firefly_date and TransactionMatcher.compare_amounts(csv_amount, firefly_amount):
+            if (csv_date == firefly_date
+                    and TransactionMatcher.compare_amounts(csv_amount, firefly_amount)):
                 matches.append(record)
 
         return matches
