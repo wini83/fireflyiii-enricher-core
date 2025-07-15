@@ -76,8 +76,10 @@ class FireflyClient:
         try:
             response = requests.get(url, headers=self.headers, timeout=10)
             response.raise_for_status()
-        except requests.RequestException as e:
-            logger.error(f"Failed to fetch transaction {transaction_id}: {e}")
+        except requests.RequestException as err:
+            logger.error(
+                "Failed to fetch transaction %s: %s", transaction_id, err
+            )
             return
 
         payload = {
@@ -87,18 +89,24 @@ class FireflyClient:
         }
 
         try:
-            response = requests.put(url, headers=self.headers, json=payload, timeout=10)
+            response = requests.put(
+                url, headers=self.headers, json=payload, timeout=10
+            )
             response.raise_for_status()
-            logger.info(f"Updated description for transaction {transaction_id}")
-        except requests.RequestException as e:
-            logger.error(f"Update error for {transaction_id}: {e}")
+            logger.info(
+                "Updated description for transaction %s", transaction_id
+            )
+        except requests.RequestException as err:
+            logger.error("Update error for %s: %s", transaction_id, err)
 
     def update_transaction_notes(self, transaction_id, new_notes):
         """Replace the notes for a given transaction."""
         url = f"{self.base_url}/api/v1/transactions/{transaction_id}"
         response = requests.get(url, headers=self.headers, timeout=10)
         if response.status_code != 200:
-            logger.error(f"Failed to fetch transaction {transaction_id}")
+            logger.error(
+                "Failed to fetch transaction %s", transaction_id
+            )
             return
         existing_data = response.json()
         old_description = existing_data.get("data", {}).get("attributes", {}).get("description", "")
@@ -110,22 +118,37 @@ class FireflyClient:
                 "notes": new_notes
             }]
         }
-        response = requests.put(url, headers=self.headers, json=payload, timeout=10)
+        response = requests.put(
+            url, headers=self.headers, json=payload, timeout=10
+        )
         if response.status_code == 200:
-            logger.info(f"Updated notes for transaction {transaction_id}")
+            logger.info(
+                "Updated notes for transaction %s", transaction_id
+            )
         else:
             logger.error(
-                f"Error updating notes for {transaction_id}: {response.status_code} - {response.text}"
+                "Error updating notes for %s: %s - %s",
+                transaction_id,
+                response.status_code,
+                response.text,
             )
 
     def add_tag_to_transaction(self, transaction_id, tag_id):
         """Attach a tag to the specified transaction."""
         url = f"{self.base_url}/api/v1/transactions/{transaction_id}/tags"
         payload = {"tags": [str(tag_id)]}
-        response = requests.post(url, headers=self.headers, json=payload, timeout=10)
+        response = requests.post(
+            url, headers=self.headers, json=payload, timeout=10
+        )
         if response.status_code == 200:
-            logger.info(f"Added tag {tag_id} to transaction {transaction_id}")
+            logger.info(
+                "Added tag %s to transaction %s", tag_id, transaction_id
+            )
         else:
             logger.error(
-                f"Error adding tag {tag_id} to transaction {transaction_id}: {response.status_code} - {response.text}"
+                "Error adding tag %s to transaction %s: %s - %s",
+                tag_id,
+                transaction_id,
+                response.status_code,
+                response.text,
             )
