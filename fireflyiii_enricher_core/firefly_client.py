@@ -45,7 +45,8 @@ def simplify_transactions(transactions):
             "id": t["id"],
             "description": sub["description"],
             "amount": sub["amount"],
-            "date": sub["date"]
+            "date": sub["date"],
+            "tags":sub.get("tags","")
         })
     return simplified
 
