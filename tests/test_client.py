@@ -33,7 +33,7 @@ def test_update_description_success(mock_request):
     """Test successful update of transaction description."""
     mock_request.return_value = MockResponse({})
     client = FireflyClient(BASE_URL, TOKEN)
-    client.update_transaction_description("123", "Test")
+    client.update_transaction_description(123, "Test")
 
 
 @patch("fireflyiii_enricher_core.firefly_client.requests.request")
@@ -41,7 +41,7 @@ def test_update_transaction_notes_success(mock_request):
     """Test successful update of transaction notes."""
     mock_request.return_value = MockResponse({})
     client = FireflyClient(BASE_URL, TOKEN)
-    client.update_transaction_notes("123", "Some note")
+    client.update_transaction_notes(123, "Some note")
 
 
 @patch("fireflyiii_enricher_core.firefly_client.requests.request")
@@ -61,7 +61,7 @@ def test_add_tag_to_transaction(mock_request):
     }
     mock_request.return_value = MockResponse(mock_response_data)
     client = FireflyClient(BASE_URL, TOKEN)
-    client.add_tag_to_transaction("123", "processed")
+    client.add_tag_to_transaction(123, "processed")
 
 
 

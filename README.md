@@ -51,13 +51,13 @@ client = FireflyClient(
 transactions = client.fetch_transactions()
 
 # Update description
-client.update_transaction_description("123", "New description")
+client.update_transaction_description(123, "New description")
 
 # Update notes
-client.update_transaction_notes("123", "Some extra notes")
+client.update_transaction_notes(123, "Some extra notes")
 
 # Add a tag
-client.add_tag_to_transaction("123", "processed")
+client.add_tag_to_transaction(123, "processed")
 ```
 
 ## 🧪 Testing
