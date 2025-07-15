@@ -67,9 +67,11 @@ def test_json_decode_error(mock_request):
     class BadJsonResponse:
         """Mocked response that raises ValueError on json()."""
         def raise_for_status(self):
-            pass
+            """Mocked response that raises ValueError on json()."""
+            return
 
         def json(self):
+            """Mocked response that raises ValueError on json()."""
             raise ValueError("bad json")
 
     mock_request.return_value = BadJsonResponse()
@@ -82,6 +84,7 @@ class MockResponse:
     """Generic mock response for testing purposes."""
 
     def __init__(self, json_data):
+        """Initialize with mock JSON data."""
         self._json = json_data
         self.status_code = 200
 
@@ -91,4 +94,5 @@ class MockResponse:
 
     def raise_for_status(self):
         """Simulate successful response (does nothing)."""
-        pass
+        # No action needed for success simulation
+        return
