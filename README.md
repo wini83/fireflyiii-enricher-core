@@ -32,7 +32,7 @@ Set up your Firefly III credentials in an environment file and run the example
 script:
 
 ```bash
-python examples/minimal_usage.py
+python examples/min_usage_search.py
 ```
 
 The script will fetch transactions from your Firefly III instance and print a

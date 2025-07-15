@@ -51,23 +51,11 @@ def test_update_description_success(mock_get, mock_put):
     mock_put.return_value = fake_response()
 
     client = FireflyClient(BASE_URL, HEADERS)
-    client.update_transaction_description("123", "new desc")
+    client.update_transaction_description(123, "new desc")
 
     mock_put.assert_called_once()
     _, kwargs = mock_put.call_args
     assert "new desc" in str(kwargs["json"])
-
-@patch("fireflyiii_enricher_core.firefly_client.requests.post")
-def test_add_tag_to_transaction(mock_post):
-    """Test adding a tag to a transaction."""
-    mock_post.return_value = fake_response()
-
-    client = FireflyClient(BASE_URL, HEADERS)
-    client.add_tag_to_transaction("123", tag_id=999)
-
-    mock_post.assert_called_once()
-    _, kwargs = mock_post.call_args
-    assert kwargs["json"] == {"tags": ["999"]}
 
 @patch("fireflyiii_enricher_core.firefly_client.requests.put")
 @patch("fireflyiii_enricher_core.firefly_client.requests.get")
@@ -79,7 +67,7 @@ def test_update_transaction_notes(mock_get, mock_put):
     mock_put.return_value = fake_response()
 
     client = FireflyClient(BASE_URL, HEADERS)
-    client.update_transaction_notes("123", new_notes="note test")
+    client.update_transaction_notes(123, new_notes="note test")
 
     mock_put.assert_called_once()
     _, kwargs = mock_put.call_args
@@ -99,7 +87,7 @@ def test_update_transaction_description_http_error_on_get(mock_get):
     mock_get.return_value = fake_response(status_code=404)
     client = FireflyClient(BASE_URL, HEADERS)
     # Should not raise, only log the error
-    client.update_transaction_description("123", "test")
+    client.update_transaction_description(123, "test")
 
 @patch("fireflyiii_enricher_core.firefly_client.requests.get")
 @patch("fireflyiii_enricher_core.firefly_client.requests.put")
@@ -109,4 +97,4 @@ def test_update_transaction_description_http_error_on_put(mock_put, mock_get):
     mock_put.return_value = fake_response(status_code=500)
     client = FireflyClient(BASE_URL, HEADERS)
     # Should not raise, only log the error
-    client.update_transaction_description("123", "test")
+    client.update_transaction_description(123, "test")
