@@ -47,9 +47,22 @@ def test_update_transaction_notes_success(mock_request):
 @patch("fireflyiii_enricher_core.firefly_client.requests.request")
 def test_add_tag_to_transaction(mock_request):
     """Test successful adding of a tag to a transaction."""
-    mock_request.return_value = MockResponse({})
+    mock_response_data = {
+        "data": {
+            "attributes": {
+                "transactions": [
+                    {
+                        "description": "Old description",
+                        "tags": []
+                    }
+                ]
+            }
+        }
+    }
+    mock_request.return_value = MockResponse(mock_response_data)
     client = FireflyClient(BASE_URL, TOKEN)
     client.add_tag_to_transaction("123", "processed")
+
 
 
 @patch("fireflyiii_enricher_core.firefly_client.requests.request")
