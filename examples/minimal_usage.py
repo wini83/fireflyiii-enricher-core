@@ -1,6 +1,8 @@
-from fireflyiii_enricher_core.firefly_client import FireflyClient
+"""Demonstrate minimal usage of :class:`FireflyClient`."""
+
 import os
 from dotenv import load_dotenv
+from fireflyiii_enricher_core.firefly_client import FireflyClient
 
 # Load environment variables from .env.example file
 load_dotenv()
