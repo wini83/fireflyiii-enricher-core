@@ -25,4 +25,4 @@ simplified = simplify_transactions(transactions)
 
 # Display matching transactions
 for tx in simplified:
-    print(f"{tx['id']}: {tx['date']} | {tx['amount']} | {tx['description']} |{tx['tags']}")
+    print(f"{tx.id}: {tx.date} | {tx.amount} | {tx.description} |{tx.tags}")

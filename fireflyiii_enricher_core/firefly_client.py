@@ -2,9 +2,11 @@
 
 import logging
 from datetime import datetime
+from typing import List
 
 import requests
 from requests import Timeout, HTTPError, RequestException
+from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
@@ -44,15 +46,36 @@ def simplify_transactions(transactions):
     for t in transactions:
         sub = t["attributes"]["transactions"][0]
         date = datetime.fromisoformat(sub["date"]).date()
-        simplified.append({
-            "id": t["id"],
-            "description": sub["description"],
-            "amount": float(sub["amount"]),
-            "date": date,
-            "tags":sub.get("tags","")
-        })
+        simplified.append(SimplifiedTx(
+            id= t["id"],
+            description = sub["description"],
+            amount= float(sub["amount"]),
+            date = date,
+            tags=sub.get("tags","")
+        ))
     return simplified
 
+
+@dataclass(eq=False)
+class SimplifiedItem:
+    date: datetime.date
+    amount: float
+
+    def compare_amount(self,amount:float)->bool:
+        """Return True if the amounts are equal ignoring their sign."""
+        return abs(float(self.amount)) == abs(float(amount))
+
+    def __eq__(self, other):
+        if not isinstance(other, SimplifiedItem):
+            return NotImplemented
+        return self.date == other.date and self.compare_amount(other.amount)
+
+
+@dataclass
+class SimplifiedTx(SimplifiedItem):
+    id:str
+    description:str
+    tags:List[str]
 
 class FireflyClient:
     """Minimal wrapper around the Firefly III REST API."""
@@ -160,3 +183,6 @@ class FireflyClient:
         }
         self._safe_request("put", url, json=payload)
         return response
+
+
+
