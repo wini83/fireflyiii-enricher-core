@@ -65,7 +65,7 @@ class SimplifiedItem:
         """Return True if the amounts are equal ignoring their sign."""
         return abs(float(self.amount)) == abs(float(amount))
 
-    def __eq__(self, other):
+    def compare(self, other) ->bool:
         if not isinstance(other, SimplifiedItem):
             return NotImplemented
         return self.date == other.date and self.compare_amount(other.amount)
