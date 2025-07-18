@@ -1,5 +1,5 @@
 """Match bank transactions with records retrieved from Firefly."""
-from datetime import datetime
+from datetime import date
 
 
 class TransactionMatcher:
@@ -13,13 +13,13 @@ class TransactionMatcher:
     @staticmethod
     def match(tx, records):
         """Return CSV records that correspond to the provided transaction."""
-        firefly_date = tx["date"]
-        firefly_amount = tx["amount"]
+        firefly_date:date = tx["date"]
+        firefly_amount:float = tx["amount"]
         matches = []
 
         for record in records:
-            csv_date = datetime.strptime(record["date"], "%d-%m-%Y").date()
-            csv_amount = float(record["amount"])
+            csv_date:date = record["date"]
+            csv_amount:float = record["amount"]
             if (csv_date == firefly_date
                     and TransactionMatcher.compare_amounts(csv_amount, firefly_amount)):
                 matches.append(record)
