@@ -11,6 +11,6 @@ class TransactionMatcher:
     def match(tx: SimplifiedTx,records: List[SimplifiedItem])->List[SimplifiedItem]:
         matches:List[SimplifiedItem] = []
         for record in records:
-            if tx.compare(record):
+            if record.compare(tx):
                 matches.append(record)
         return matches
