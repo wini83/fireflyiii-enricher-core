@@ -1,6 +1,8 @@
 """Utility client for interacting with the Firefly III API."""
 
 import logging
+from datetime import datetime
+
 import requests
 from requests import Timeout, HTTPError, RequestException
 
@@ -41,11 +43,12 @@ def simplify_transactions(transactions):
     simplified = []
     for t in transactions:
         sub = t["attributes"]["transactions"][0]
+        date = datetime.fromisoformat(sub["date"]).date()
         simplified.append({
             "id": t["id"],
             "description": sub["description"],
-            "amount": sub["amount"],
-            "date": sub["date"],
+            "amount": float(sub["amount"]),
+            "date": date,
             "tags":sub.get("tags","")
         })
     return simplified

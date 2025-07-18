@@ -13,8 +13,8 @@ class TransactionMatcher:
     @staticmethod
     def match(tx, records):
         """Return CSV records that correspond to the provided transaction."""
-        firefly_date = datetime.fromisoformat(tx["date"]).date()
-        firefly_amount = float(tx["amount"])
+        firefly_date = tx["date"]
+        firefly_amount = tx["amount"]
         matches = []
 
         for record in records:

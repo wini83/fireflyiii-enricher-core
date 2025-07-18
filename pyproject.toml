@@ -1,6 +1,6 @@
 [project]
 name = "fireflyiii-enricher-core"
-version = "0.2.3"
+version = "0.3.0"
 description = "A core library for enriching Firefly III transactions"
 authors = [{ name = "WiNi83", email = "rico.gotti@gmail.com" }]
 readme = "README.md"
