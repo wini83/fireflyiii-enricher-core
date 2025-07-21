@@ -2,19 +2,22 @@
 """Demonstrate minimal usage of :class:`FireflyClient`."""
 
 import os
+
 from dotenv import load_dotenv
-from fireflyiii_enricher_core.firefly_client import (FireflyClient,
-                                                     filter_single_part,
-                                                     filter_by_description,
-                                                     simplify_transactions)
+
+from fireflyiii_enricher_core.firefly_client import (
+    FireflyClient,
+    filter_by_description,
+    filter_single_part,
+    simplify_transactions,
+)
 
 # Load environment variables from .env.example file
 load_dotenv()
 
 # Initialize Firefly III client with demo credentials
 firefly = FireflyClient(
-    base_url=os.getenv("FIREFLY_URL"),
-    token=os.getenv('FIREFLY_TOKEN')
+    base_url=os.getenv("FIREFLY_URL"), token=os.getenv('FIREFLY_TOKEN')
 )
 
 # Fetch, filter and simplify transactions

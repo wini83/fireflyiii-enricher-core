@@ -1,8 +1,10 @@
 """Unit tests for FireflyClient class."""
 
 from unittest.mock import patch
+
 import pytest
 import requests
+
 from fireflyiii_enricher_core.firefly_client import FireflyClient
 
 BASE_URL = "https://demo.firefly.local"
@@ -13,14 +15,10 @@ TOKEN = "test-token"
 def test_fetch_transactions(mock_request):
     """Test fetching paginated transactions."""
     mock_request.side_effect = [
-        MockResponse({
-            "data": [{"id": "1"}, {"id": "2"}],
-            "links": {"next": "some_url"}
-        }),
-        MockResponse({
-            "data": [{"id": "3"}],
-            "links": {"next": None}
-        }),
+        MockResponse(
+            {"data": [{"id": "1"}, {"id": "2"}], "links": {"next": "some_url"}}
+        ),
+        MockResponse({"data": [{"id": "3"}], "links": {"next": None}}),
     ]
 
     client = FireflyClient(BASE_URL, TOKEN)
@@ -50,19 +48,13 @@ def test_add_tag_to_transaction(mock_request):
     mock_response_data = {
         "data": {
             "attributes": {
-                "transactions": [
-                    {
-                        "description": "Old description",
-                        "tags": []
-                    }
-                ]
+                "transactions": [{"description": "Old description", "tags": []}]
             }
         }
     }
     mock_request.return_value = MockResponse(mock_response_data)
     client = FireflyClient(BASE_URL, TOKEN)
     client.add_tag_to_transaction(123, "processed")
-
 
 
 @patch("fireflyiii_enricher_core.firefly_client.requests.request")
@@ -77,8 +69,10 @@ def test_timeout_handling(mock_request):
 @patch("fireflyiii_enricher_core.firefly_client.requests.request")
 def test_json_decode_error(mock_request):
     """Test JSON decode error is handled gracefully."""
+
     class BadJsonResponse:
         """Mocked response that raises ValueError on json()."""
+
         def raise_for_status(self):
             """Mocked response that raises ValueError on json()."""
             return

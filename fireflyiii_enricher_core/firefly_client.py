@@ -1,34 +1,37 @@
 """Utility client for interacting with the Firefly III API."""
 
 import logging
+from dataclasses import dataclass
 from datetime import datetime
 from typing import List
 
 import requests
-from requests import Timeout, HTTPError, RequestException
-from dataclasses import dataclass
+from requests import HTTPError, RequestException, Timeout
 
 logger = logging.getLogger(__name__)
 
 
 def filter_single_part(transactions):
     """Return only transactions that have a single sub-transaction."""
-    return [
-        t for t in transactions
-        if len(t["attributes"]["transactions"]) == 1
-    ]
+    return [t for t in transactions if len(t["attributes"]["transactions"]) == 1]
 
 
 def filter_without_category(transactions):
     """Filter out transactions that already have a category set."""
     return [
-        t for t in transactions
+        t
+        for t in transactions
         if t["attributes"]["transactions"][0]
-           .get("relationships", {}).get("category", {}).get("data") is None
+        .get("relationships", {})
+        .get("category", {})
+        .get("data")
+        is None
     ]
 
 
-def filter_by_description(transactions, description_filter: str, exact_match: bool = True):
+def filter_by_description(
+    transactions, description_filter: str, exact_match: bool = True
+):
     """Match transactions whose description matches the filter."""
     filtered = []
     for t in transactions:
@@ -46,13 +49,15 @@ def simplify_transactions(transactions):
     for t in transactions:
         sub = t["attributes"]["transactions"][0]
         date = datetime.fromisoformat(sub["date"]).date()
-        simplified.append(SimplifiedTx(
-            id= t["id"],
-            description = sub["description"],
-            amount= float(sub["amount"]),
-            date = date,
-            tags=sub.get("tags","")
-        ))
+        simplified.append(
+            SimplifiedTx(
+                id=t["id"],
+                description=sub["description"],
+                amount=float(sub["amount"]),
+                date=date,
+                tags=sub.get("tags", ""),
+            )
+        )
     return simplified
 
 
@@ -61,11 +66,11 @@ class SimplifiedItem:
     date: datetime.date
     amount: float
 
-    def compare_amount(self,amount:float)->bool:
+    def compare_amount(self, amount: float) -> bool:
         """Return True if the amounts are equal ignoring their sign."""
         return abs(float(self.amount)) == abs(float(amount))
 
-    def compare(self, other) ->bool:
+    def compare(self, other) -> bool:
         if not isinstance(other, SimplifiedItem):
             return NotImplemented
         return self.date == other.date and self.compare_amount(other.amount)
@@ -73,9 +78,10 @@ class SimplifiedItem:
 
 @dataclass
 class SimplifiedTx(SimplifiedItem):
-    id:str
-    description:str
-    tags:List[str]
+    id: str
+    description: str
+    tags: List[str]
+
 
 class FireflyClient:
     """Minimal wrapper around the Firefly III REST API."""
@@ -136,7 +142,7 @@ class FireflyClient:
         payload = {
             "apply_rules": True,
             "fire_webhooks": True,
-            "transactions": [{"description": new_description}]
+            "transactions": [{"description": new_description}],
         }
         response_put = self._safe_request("put", url, json=payload)
         return response_put
@@ -153,9 +159,7 @@ class FireflyClient:
         payload = {
             "apply_rules": True,
             "fire_webhooks": True,
-            "transactions": [{
-                "notes": new_notes
-            }]
+            "transactions": [{"notes": new_notes}],
         }
         response = self._safe_request("put", url, json=payload)
         return response
@@ -165,9 +169,9 @@ class FireflyClient:
         url = f"{self.base_url}/api/v1/transactions/{transaction_id}"
         response = self._safe_request("get", url)
         existing_data = response
-        old_sub_transactions = (existing_data.get("data", {})
-                                .get("attributes", {})
-                                .get("transactions", []))
+        old_sub_transactions = (
+            existing_data.get("data", {}).get("attributes", {}).get("transactions", [])
+        )
         if len(old_sub_transactions) != 1:
             raise RuntimeError("Transaction is not single part")
         old_sub_tx = old_sub_transactions[0]
@@ -177,12 +181,7 @@ class FireflyClient:
         payload = {
             "apply_rules": True,
             "fire_webhooks": True,
-            "transactions": [{
-                "tags": tags
-            }]
+            "transactions": [{"tags": tags}],
         }
         self._safe_request("put", url, json=payload)
         return response
-
-
-
