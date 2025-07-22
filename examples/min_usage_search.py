@@ -15,10 +15,14 @@ from fireflyiii_enricher_core.firefly_client import (
 # Load environment variables from .env.example file
 load_dotenv()
 
-# Initialize Firefly III client with demo credentials
-firefly = FireflyClient(
-    base_url=os.getenv("FIREFLY_URL"), token=os.getenv('FIREFLY_TOKEN')
-)
+FIREFLY_URL = os.getenv("FIREFLY_URL")
+FIREFLY_TOKEN = os.getenv("FIREFLY_TOKEN")
+
+if FIREFLY_URL is None or FIREFLY_TOKEN is None:
+    raise RuntimeError("Missing FIREFLY_URL or FIREFLY_TOKEN in environment.")
+
+# Initialize Firefly III client with credentials
+firefly = FireflyClient(base_url=FIREFLY_URL, token=FIREFLY_TOKEN)
 
 # Fetch, filter and simplify transactions
 transactions = firefly.fetch_transactions()

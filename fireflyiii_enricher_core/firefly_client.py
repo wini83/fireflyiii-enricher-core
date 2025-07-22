@@ -1,9 +1,7 @@
-"""Utility client for interacting with the Firefly III API."""
-
 import logging
 from dataclasses import dataclass
-from datetime import datetime
-from typing import List
+from datetime import date, datetime
+from typing import Any, Dict, List
 
 import requests
 from requests import HTTPError, RequestException, Timeout
@@ -11,12 +9,12 @@ from requests import HTTPError, RequestException, Timeout
 logger = logging.getLogger(__name__)
 
 
-def filter_single_part(transactions):
+def filter_single_part(transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Return only transactions that have a single sub-transaction."""
     return [t for t in transactions if len(t["attributes"]["transactions"]) == 1]
 
 
-def filter_without_category(transactions):
+def filter_without_category(transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Filter out transactions that already have a category set."""
     return [
         t
@@ -30,8 +28,10 @@ def filter_without_category(transactions):
 
 
 def filter_by_description(
-    transactions, description_filter: str, exact_match: bool = True
-):
+    transactions: List[Dict[str, Any]],
+    description_filter: str,
+    exact_match: bool = True,
+) -> List[Dict[str, Any]]:
     """Match transactions whose description matches the filter."""
     filtered = []
     for t in transactions:
@@ -43,18 +43,18 @@ def filter_by_description(
     return filtered
 
 
-def simplify_transactions(transactions):
+def simplify_transactions(transactions: List[Dict[str, Any]]) -> List['SimplifiedTx']:
     """Convert the raw API response into a flat structure."""
     simplified = []
     for t in transactions:
         sub = t["attributes"]["transactions"][0]
-        date = datetime.fromisoformat(sub["date"]).date()
+        tx_date = datetime.fromisoformat(sub["date"]).date()
         simplified.append(
             SimplifiedTx(
                 id=t["id"],
                 description=sub["description"],
                 amount=float(sub["amount"]),
-                date=date,
+                date=tx_date,
                 tags=sub.get("tags", ""),
             )
         )
@@ -65,23 +65,24 @@ def simplify_transactions(transactions):
 class SimplifiedItem:
     """Representation of a simplified transaction item."""
 
-    date: datetime.date
+    date: date
     amount: float
 
     def compare_amount(self, amount: float) -> bool:
         """Return ``True`` if the amounts are equal ignoring their sign."""
         return abs(float(self.amount)) == abs(float(amount))
 
-    def compare(self, other) -> bool:
+    def compare(self, other: Any) -> bool:
         """Return ``True`` if ``other`` has the same date and amount."""
         if not isinstance(other, SimplifiedItem):
-            return NotImplemented
+            return False
         return self.date == other.date and self.compare_amount(other.amount)
 
 
 @dataclass
 class SimplifiedTx(SimplifiedItem):
     """Simplified representation of a Firefly III transaction."""
+
     id: str
     description: str
     tags: List[str]
@@ -90,7 +91,7 @@ class SimplifiedTx(SimplifiedItem):
 class FireflyClient:
     """Minimal wrapper around the Firefly III REST API."""
 
-    def __init__(self, base_url: str, token: str):
+    def __init__(self, base_url: str, token: str) -> None:
         self.base_url = base_url.rstrip("/")
         self.headers = {
             "Authorization": f"Bearer {token}",
@@ -98,7 +99,7 @@ class FireflyClient:
             "Content-Type": "application/vnd.api+json",
         }
 
-    def _safe_request(self, method, url, **kwargs):
+    def _safe_request(self, method: str, url: str, **kwargs: Any) -> Any:
         try:
             response = requests.request(
                 method, url, headers=self.headers, timeout=10, **kwargs
@@ -118,12 +119,14 @@ class FireflyClient:
         except RequestException as exc:
             raise RuntimeError(f"Request failed: {exc}") from exc
 
-    def fetch_transactions(self, tx_type="withdrawal", limit=1000):
+    def fetch_transactions(
+        self, tx_type: str = "withdrawal", limit: int = 1000
+    ) -> List[Dict[str, Any]]:
         """Retrieve transactions of the given type."""
         url = f"{self.base_url}/api/v1/transactions"
         params = {"limit": limit, "type": tx_type}
         page = 1
-        transactions = []
+        transactions: List[Dict[str, Any]] = []
 
         while True:
             params["page"] = page
@@ -135,7 +138,9 @@ class FireflyClient:
             page += 1
         return transactions
 
-    def update_transaction_description(self, transaction_id: int, new_description: str):
+    def update_transaction_description(
+        self, transaction_id: int, new_description: str
+    ) -> Any:
         """Change the description field for a given transaction."""
         url = f"{self.base_url}/api/v1/transactions/{transaction_id}"
         response = self._safe_request("get", url)
@@ -151,7 +156,7 @@ class FireflyClient:
         response_put = self._safe_request("put", url, json=payload)
         return response_put
 
-    def update_transaction_notes(self, transaction_id: int, new_notes: str):
+    def update_transaction_notes(self, transaction_id: int, new_notes: str) -> Any:
         """Replace the notes for a given transaction."""
         url = f"{self.base_url}/api/v1/transactions/{transaction_id}"
         response = self._safe_request("get", url)
@@ -168,7 +173,7 @@ class FireflyClient:
         response = self._safe_request("put", url, json=payload)
         return response
 
-    def add_tag_to_transaction(self, transaction_id: int, new_tag: str):
+    def add_tag_to_transaction(self, transaction_id: int, new_tag: str) -> Any:
         """Attach a tag to the specified transaction."""
         url = f"{self.base_url}/api/v1/transactions/{transaction_id}"
         response = self._safe_request("get", url)

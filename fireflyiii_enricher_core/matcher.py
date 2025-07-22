@@ -4,6 +4,7 @@ from typing import List
 
 from fireflyiii_enricher_core.firefly_client import SimplifiedItem, SimplifiedTx
 
+
 # pylint: disable=too-few-public-methods
 class TransactionMatcher:
     """Helper for aligning CSV records with Firefly transactions."""
