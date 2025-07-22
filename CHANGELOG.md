@@ -1,3 +1,9 @@
+## v0.4.7 (2025-07-22)
+
+### Refactor
+
+- **var**: fixing mypy & pylint issues
+
 ## v0.4.6 (2025-07-21)
 
 ### Refactor
