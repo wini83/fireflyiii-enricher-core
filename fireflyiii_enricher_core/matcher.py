@@ -4,12 +4,13 @@ from typing import List
 
 from fireflyiii_enricher_core.firefly_client import SimplifiedItem, SimplifiedTx
 
-
+# pylint: disable=too-few-public-methods
 class TransactionMatcher:
     """Helper for aligning CSV records with Firefly transactions."""
 
     @staticmethod
     def match(tx: SimplifiedTx, records: List[SimplifiedItem]) -> List[SimplifiedItem]:
+        """Return all records that match the given transaction."""
         matches: List[SimplifiedItem] = []
         for record in records:
             if record.compare(tx):
