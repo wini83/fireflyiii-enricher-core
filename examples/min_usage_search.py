@@ -9,7 +9,8 @@ from fireflyiii_enricher_core.firefly_client import (
     FireflyClient,
     filter_by_description,
     filter_single_part,
-    simplify_transactions, filter_without_tag,
+    filter_without_tag,
+    simplify_transactions,
 )
 
 # Load environment variables from .env.example file
@@ -29,10 +30,13 @@ transactions = firefly.fetch_transactions()
 transactions = filter_single_part(transactions)
 transactions = filter_by_description(transactions, "allegro", exact_match=False)
 
-allegro_not_processed = filter_without_tag(transactions,"allegro_done")
+allegro_not_processed = filter_without_tag(transactions, "allegro_done")
 simplified = simplify_transactions(allegro_not_processed)
 
-print(f"Transaction allegro: {len(transactions)} - not processed {len(allegro_not_processed)}")
+print(
+    f"Transaction allegro: {len(transactions)} -"
+    f" not processed {len(allegro_not_processed)}"
+)
 
 
 # Display matching transactions

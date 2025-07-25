@@ -10,6 +10,7 @@ from requests import HTTPError, RequestException, Timeout
 
 logger = logging.getLogger(__name__)
 
+
 def filter_without_category(transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Filter out transactions that already have a category set."""
     return [
@@ -22,9 +23,11 @@ def filter_without_category(transactions: List[Dict[str, Any]]) -> List[Dict[str
         is None
     ]
 
+
 def filter_single_part(transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Return only transactions that have a single sub-transaction."""
     return [t for t in transactions if len(t["attributes"]["transactions"]) == 1]
+
 
 def filter_by_description(
     transactions: List[Dict[str, Any]],
@@ -41,21 +44,25 @@ def filter_by_description(
             filtered.append(t)
     return filtered
 
-def filter_without_tag(transactions: List[Dict[str, Any]], tag: str) -> List[Dict[str, Any]]:
+
+def filter_without_tag(
+    transactions: List[Dict[str, Any]], tag: str
+) -> List[Dict[str, Any]]:
     """
-        Filters out transactions that contain a specific tag.
+    Filters out transactions that contain a specific tag.
 
-        Iterates over a list of transaction dictionaries and returns only those
-        that do not include the given tag in their 'tags' field.
+    Iterates over a list of transaction dictionaries and returns only those
+    that do not include the given tag in their 'tags' field.
 
-        Args:
-            transactions (List[Dict[str, Any]]): List of transaction objects (dicts) from Firefly.
-            tag (str): The tag to exclude from the results.
+    Args:
+        transactions (List[Dict[str, Any]]): List of transaction objects (dicts)
+        from Firefly.
+        tag (str): The tag to exclude from the results.
 
-        Returns:
-            List[Dict[str, Any]]: Filtered list of transactions without the specified tag.
-        """
-    filtered:List[Dict[str, Any]] = []
+    Returns:
+        List[Dict[str, Any]]: Filtered list of transactions without the specified tag.
+    """
+    filtered: List[Dict[str, Any]] = []
     for tx in transactions:
         if tag not in tx["attributes"]["transactions"][0]["tags"]:
             filtered.append(tx)
