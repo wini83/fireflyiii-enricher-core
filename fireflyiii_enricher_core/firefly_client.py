@@ -10,12 +10,6 @@ from requests import HTTPError, RequestException, Timeout
 
 logger = logging.getLogger(__name__)
 
-
-def filter_single_part(transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Return only transactions that have a single sub-transaction."""
-    return [t for t in transactions if len(t["attributes"]["transactions"]) == 1]
-
-
 def filter_without_category(transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Filter out transactions that already have a category set."""
     return [
@@ -28,6 +22,9 @@ def filter_without_category(transactions: List[Dict[str, Any]]) -> List[Dict[str
         is None
     ]
 
+def filter_single_part(transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Return only transactions that have a single sub-transaction."""
+    return [t for t in transactions if len(t["attributes"]["transactions"]) == 1]
 
 def filter_by_description(
     transactions: List[Dict[str, Any]],
