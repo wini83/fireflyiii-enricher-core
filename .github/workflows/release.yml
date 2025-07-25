@@ -30,7 +30,12 @@ jobs:
       - name: Bump version and create changelog
         id: cz
         run: |
-          cz bump --yes --changelog
+            cz bump --yes --changelog || exit_code=$?
+            if [ "$exit_code" -eq 21 ]; then
+            echo "No eligible commits to bump. Skipping version bump."
+            exit 0
+            fi
+            exit $exit_code
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
