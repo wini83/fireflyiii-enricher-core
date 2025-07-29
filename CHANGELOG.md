@@ -1,3 +1,9 @@
+## v0.5.0 (2025-07-25)
+
+### Feat
+
+- **filter_without_tag**: new function
+
 ## v0.4.7 (2025-07-22)
 
 ### Refactor
