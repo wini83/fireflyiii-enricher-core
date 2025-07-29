@@ -29,16 +29,14 @@ firefly = FireflyClient(base_url=FIREFLY_URL, token=FIREFLY_TOKEN)
 transactions = firefly.fetch_transactions()
 transactions = filter_single_part(transactions)
 transactions = filter_by_description(transactions, "allegro", exact_match=False)
+ALLEGRO_AMOUNT = len(transactions)
+transactions = filter_without_tag(transactions, "allegro_done")
+simplified = simplify_transactions(transactions)
 
-allegro_not_processed = filter_without_tag(transactions, "allegro_done")
-simplified = simplify_transactions(allegro_not_processed)
-
-print(
-    f"Transaction allegro: {len(transactions)} -"
-    f" not processed {len(allegro_not_processed)}"
-)
-
+print(f"Transaction allegro: {ALLEGRO_AMOUNT} -" f" not processed {len(transactions)}")
 
 # Display matching transactions
 for tx in simplified:
-    print(f"{tx.id}: {tx.date} | {tx.amount} | {tx.description} |{tx.tags}")
+    print(
+        f"{tx.id}: {tx.date} | {tx.amount} | {tx.description} |{tx.tags} | |{tx.notes}"
+    )

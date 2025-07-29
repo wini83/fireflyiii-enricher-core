@@ -82,6 +82,7 @@ def simplify_transactions(transactions: List[Dict[str, Any]]) -> List['Simplifie
                 amount=float(sub["amount"]),
                 date=tx_date,
                 tags=sub.get("tags", ""),
+                notes=sub.get("notes", ""),
             )
         )
     return simplified
@@ -112,6 +113,7 @@ class SimplifiedTx(SimplifiedItem):
     id: str
     description: str
     tags: List[str]
+    notes: str
 
 
 class FireflyClient:

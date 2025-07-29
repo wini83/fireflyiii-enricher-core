@@ -1,6 +1,7 @@
 """Unit tests for FireflyClient class."""
 
-from unittest.mock import patch
+from typing import Any, Dict
+from unittest.mock import MagicMock, patch
 
 import pytest
 import requests
@@ -12,7 +13,7 @@ TOKEN = "test-token"
 
 
 @patch("fireflyiii_enricher_core.firefly_client.requests.request")
-def test_fetch_transactions(mock_request):
+def test_fetch_transactions(mock_request: MagicMock) -> None:
     """Test fetching paginated transactions."""
     mock_request.side_effect = [
         MockResponse(
@@ -27,7 +28,7 @@ def test_fetch_transactions(mock_request):
 
 
 @patch("fireflyiii_enricher_core.firefly_client.requests.request")
-def test_update_description_success(mock_request):
+def test_update_description_success(mock_request: MagicMock) -> None:
     """Test successful update of transaction description."""
     mock_request.return_value = MockResponse({})
     client = FireflyClient(BASE_URL, TOKEN)
@@ -35,7 +36,7 @@ def test_update_description_success(mock_request):
 
 
 @patch("fireflyiii_enricher_core.firefly_client.requests.request")
-def test_update_transaction_notes_success(mock_request):
+def test_update_transaction_notes_success(mock_request: MagicMock) -> None:
     """Test successful update of transaction notes."""
     mock_request.return_value = MockResponse({})
     client = FireflyClient(BASE_URL, TOKEN)
@@ -43,7 +44,7 @@ def test_update_transaction_notes_success(mock_request):
 
 
 @patch("fireflyiii_enricher_core.firefly_client.requests.request")
-def test_add_tag_to_transaction(mock_request):
+def test_add_tag_to_transaction(mock_request: MagicMock) -> None:
     """Test successful adding of a tag to a transaction."""
     mock_response_data = {
         "data": {
@@ -58,7 +59,7 @@ def test_add_tag_to_transaction(mock_request):
 
 
 @patch("fireflyiii_enricher_core.firefly_client.requests.request")
-def test_timeout_handling(mock_request):
+def test_timeout_handling(mock_request: MagicMock) -> None:
     """Test timeout exception is handled and re-raised."""
     mock_request.side_effect = requests.Timeout()
     client = FireflyClient(BASE_URL, TOKEN)
@@ -67,17 +68,17 @@ def test_timeout_handling(mock_request):
 
 
 @patch("fireflyiii_enricher_core.firefly_client.requests.request")
-def test_json_decode_error(mock_request):
+def test_json_decode_error(mock_request: MagicMock) -> None:
     """Test JSON decode error is handled gracefully."""
 
     class BadJsonResponse:
         """Mocked response that raises ValueError on json()."""
 
-        def raise_for_status(self):
+        def raise_for_status(self) -> None:
             """Mocked response that raises ValueError on json()."""
             return
 
-        def json(self):
+        def json(self) -> Dict[str, Any]:
             """Mocked response that raises ValueError on json()."""
             raise ValueError("bad json")
 
@@ -90,16 +91,15 @@ def test_json_decode_error(mock_request):
 class MockResponse:
     """Generic mock response for testing purposes."""
 
-    def __init__(self, json_data):
+    def __init__(self, json_data: Dict[str, Any]) -> None:
         """Initialize with mock JSON data."""
         self._json = json_data
-        self.status_code = 200
+        self.status_code: int = 200
 
-    def json(self):
+    def json(self) -> Dict[str, Any]:
         """Return mocked JSON content."""
         return self._json
 
-    def raise_for_status(self):
+    def raise_for_status(self) -> None:
         """Simulate successful response (does nothing)."""
-        # No action needed for success simulation
         return
