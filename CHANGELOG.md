@@ -1,10 +1,18 @@
-## v0.5.0 (2025-07-25)
+## v0.4.8 (2025-07-29)
+
+### Fix
+
+- **SimplifiedTx**: notes added
+
+## v0.4.7 (2025-07-29)
 
 ### Feat
 
 - **filter_without_tag**: new function
 
-## v0.4.7 (2025-07-22)
+### Fix
+
+- **SimplifiedTx**: added notes field
 
 ### Refactor
 
