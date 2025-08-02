@@ -1,3 +1,9 @@
+## v0.4.9 (2025-08-02)
+
+### Fix
+
+- **typing**: changed pyproject.toml
+
 ## v0.4.8 (2025-07-29)
 
 ### Fix
