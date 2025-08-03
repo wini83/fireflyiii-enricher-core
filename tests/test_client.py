@@ -28,6 +28,21 @@ def test_fetch_transactions(mock_request: MagicMock) -> None:
 
 
 @patch("fireflyiii_enricher_core.firefly_client.requests.request")
+def test_fetch_categories(mock_request: MagicMock) -> None:
+    """Test fetching paginated categories."""
+    mock_request.side_effect = [
+        MockResponse(
+            {"data": [{"id": "1"}, {"id": "2"}], "links": {"next": "some_url"}}
+        ),
+        MockResponse({"data": [{"id": "3"}], "links": {"next": None}}),
+    ]
+
+    client = FireflyClient(BASE_URL, TOKEN)
+    result = client.fetch_categories()
+    assert len(result) == 3
+
+
+@patch("fireflyiii_enricher_core.firefly_client.requests.request")
 def test_update_description_success(mock_request: MagicMock) -> None:
     """Test successful update of transaction description."""
     mock_request.return_value = MockResponse({})

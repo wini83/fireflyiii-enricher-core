@@ -6,6 +6,7 @@ A Python library for enriching Firefly III transactions by updating descriptions
 ## ✨ Features
 
 - ✅ Fetch transactions from Firefly III API
+- 📂 Fetch categories from Firefly III API
 - 📝 Update transaction **descriptions** and **notes**
 - 🏷️ Add tags to transactions
 - 🚫 Filter uncategorized or single-part transactions
@@ -49,6 +50,9 @@ client = FireflyClient(
 
 # Fetch latest withdrawals
 transactions = client.fetch_transactions()
+
+# Fetch categories
+categories = client.fetch_categories()
 
 # Update description
 client.update_transaction_description(123, "New description")
