@@ -166,6 +166,23 @@ class FireflyClient:
             page += 1
         return transactions
 
+    def fetch_categories(self, limit: int = 1000) -> List[Dict[str, Any]]:
+        """Retrieve all categories from Firefly III."""
+        url = f"{self.base_url}/api/v1/categories"
+        params = {"limit": limit}
+        page = 1
+        categories: List[Dict[str, Any]] = []
+
+        while True:
+            params["page"] = page
+            response = self._safe_request("get", url, params=params)
+            data = response
+            categories.extend(data["data"])
+            if not data["links"].get("next"):
+                break
+            page += 1
+        return categories
+
     def update_transaction_description(
         self, transaction_id: int, new_description: str
     ) -> Any:
