@@ -1,3 +1,10 @@
+## v0.5.0 (2025-08-03)
+
+### Feat
+
+- **firefly_client**: fetch categories
+- add category retrieval
+
 ## v0.4.9 (2025-08-02)
 
 ### Fix
