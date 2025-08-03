@@ -116,11 +116,25 @@ class SimplifiedTx(SimplifiedItem):
     notes: str
 
 
+@dataclass
+class SimplifiedCategory:
+    id: str
+    name: str
+
+    @classmethod
+    def from_api_dict(cls, category_raw: dict[str, Any]) -> 'SimplifiedCategory':
+        category_id = category_raw.get("id", "")
+        attributes = category_raw.get("attributes", {})
+        name = attributes.get("name", "")
+        return cls(id=category_id, name=name)
+
+
 class FireflyClient:
     """Minimal wrapper around the Firefly III REST API."""
 
     def __init__(self, base_url: str, token: str) -> None:
         self.base_url = base_url.rstrip("/")
+        self.token = token
         self.headers = {
             "Authorization": f"Bearer {token}",
             "Accept": "application/vnd.api+json",
@@ -166,8 +180,41 @@ class FireflyClient:
             page += 1
         return transactions
 
-    def fetch_categories(self, limit: int = 1000) -> List[Dict[str, Any]]:
-        """Retrieve all categories from Firefly III."""
+    def fetch_categories(
+        self, limit: int = 1000, simplified: bool = False
+    ) -> List[Dict[str, Any]] | List[SimplifiedCategory]:
+        """
+        Retrieve categories from Firefly III with optional simplification.
+
+        Fetches categories from Firefly III via paginated requests until all available
+        categories are retrieved or the specified limit is reached. Categories can be
+        returned either as raw dictionaries or simplified into instances of
+        `SimplifiedCategory`.
+
+        Args:
+            limit (int, optional): Maximum number of categories to retrieve.
+                                    Defaults to 1000.
+            simplified (bool, optional): Determines the format of the returned data.
+                                        If `True`,
+                                        returns a list of `SimplifiedCategory` instances
+                                        if `False`,
+                                        returns raw API data. Defaults to `False`.
+
+        Returns:
+            List[Dict[str, Any]] | List[SimplifiedCategory]: A list of category
+            data either in raw dictionary form or as simplified objects.
+
+        Examples:
+            client.fetch_categories(limit=50)
+            [{"id": "1", "attributes": {...}}, ...]
+
+            client.fetch_categories(simplified=True)
+            [SimplifiedCategory(id="1", name="Food"), ...]
+
+        Raises:
+            HTTPError: If the request to Firefly III fails.
+            KeyError: If the response data format is unexpected.
+        """
         url = f"{self.base_url}/api/v1/categories"
         params = {"limit": limit}
         page = 1
@@ -181,7 +228,12 @@ class FireflyClient:
             if not data["links"].get("next"):
                 break
             page += 1
-        return categories
+        if not simplified:
+            return categories
+        result: List[SimplifiedCategory] = []
+        for category in categories:
+            result.append(SimplifiedCategory.from_api_dict(category))
+        return result
 
     def update_transaction_description(
         self, transaction_id: int, new_description: str

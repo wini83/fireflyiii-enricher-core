@@ -33,6 +33,10 @@ ALLEGRO_AMOUNT = len(transactions)
 transactions = filter_without_tag(transactions, "allegro_done")
 simplified = simplify_transactions(transactions)
 
+categories = firefly.fetch_categories(simplified=True)
+
+print(categories)
+
 print(f"Transaction allegro: {ALLEGRO_AMOUNT} -" f" not processed {len(transactions)}")
 
 # Display matching transactions
