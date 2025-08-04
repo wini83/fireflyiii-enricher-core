@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 
 from fireflyiii_enricher_core.firefly_client import (
     FireflyClient,
-    filter_by_description,
     filter_single_part,
+    filter_without_category,
     filter_without_tag,
     simplify_transactions,
 )
@@ -28,7 +28,8 @@ firefly = FireflyClient(base_url=FIREFLY_URL, token=FIREFLY_TOKEN)
 # Fetch, filter and simplify transactions
 transactions = firefly.fetch_transactions()
 transactions = filter_single_part(transactions)
-transactions = filter_by_description(transactions, "allegro", exact_match=False)
+transactions = filter_without_category(transactions)
+# transactions = filter_by_description(transactions, "allegro", exact_match=False)
 ALLEGRO_AMOUNT = len(transactions)
 transactions = filter_without_tag(transactions, "allegro_done")
 simplified = simplify_transactions(transactions)

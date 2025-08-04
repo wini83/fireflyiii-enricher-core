@@ -16,11 +16,7 @@ def filter_without_category(transactions: List[Dict[str, Any]]) -> List[Dict[str
     return [
         t
         for t in transactions
-        if t["attributes"]["transactions"][0]
-        .get("relationships", {})
-        .get("category", {})
-        .get("data")
-        is None
+        if t["attributes"]["transactions"][0].get("category_id") is None
     ]
 
 
