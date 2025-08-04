@@ -1,3 +1,9 @@
+## v0.6.0 (2025-08-04)
+
+### Feat
+
+- **firefly_client**: added category assign
+
 ## v0.5.0 (2025-08-03)
 
 ### Feat
