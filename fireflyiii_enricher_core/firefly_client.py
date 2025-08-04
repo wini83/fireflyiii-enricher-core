@@ -83,6 +83,7 @@ def simplify_transactions(transactions: List[Dict[str, Any]]) -> List['Simplifie
                 date=tx_date,
                 tags=sub.get("tags", ""),
                 notes=sub.get("notes", ""),
+                category=sub.get("category", ""),
             )
         )
     return simplified
@@ -114,15 +115,19 @@ class SimplifiedTx(SimplifiedItem):
     description: str
     tags: List[str]
     notes: str
+    category: str
 
 
 @dataclass
 class SimplifiedCategory:
+    """Simplified representation of a Firefly III Category."""
+
     id: str
     name: str
 
     @classmethod
     def from_api_dict(cls, category_raw: dict[str, Any]) -> 'SimplifiedCategory':
+        """Create instance of SimplifiedCategory from raw api dict"""
         category_id = category_raw.get("id", "")
         attributes = category_raw.get("attributes", {})
         name = attributes.get("name", "")
@@ -266,6 +271,25 @@ class FireflyClient:
             "apply_rules": True,
             "fire_webhooks": True,
             "transactions": [{"notes": new_notes}],
+        }
+        response = self._safe_request("put", url, json=payload)
+        return response
+
+    def assign_transaction_category(
+        self, transaction_id: int, new_category_id: int
+    ) -> Any:
+        """Replace the notes for a given transaction."""
+        url = f"{self.base_url}/api/v1/transactions/{transaction_id}"
+        response = self._safe_request("get", url)
+        attributes = response.get("data", {}).get("attributes", {})
+        old_category = attributes.get("transactions", [{}])[0].get("category_id", "")
+        if old_category is not None:
+            if old_category == str(new_category_id):
+                raise RuntimeError("New data is identical to the current one.")
+        payload = {
+            "apply_rules": True,
+            "fire_webhooks": True,
+            "transactions": [{"category_id": str(new_category_id)}],
         }
         response = self._safe_request("put", url, json=payload)
         return response

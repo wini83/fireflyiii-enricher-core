@@ -9,6 +9,7 @@ A Python library for enriching Firefly III transactions by updating descriptions
 - 📂 Fetch categories from Firefly III API
 - 📝 Update transaction **descriptions** and **notes**
 - 🏷️ Add tags to transactions
+- 📝 Assign category
 - 🚫 Filter uncategorized or single-part transactions
 - ⚠️ Robust error handling (timeouts, connection issues, malformed responses)
 
@@ -62,6 +63,10 @@ client.update_transaction_notes(123, "Some extra notes")
 
 # Add a tag
 client.add_tag_to_transaction(123, "processed")
+
+# assign category
+client.assign_transaction_category(123, new_category_id=1)
+
 ```
 
 ## 🧪 Testing
