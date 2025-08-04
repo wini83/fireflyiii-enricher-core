@@ -1,3 +1,9 @@
+## v0.6.1 (2025-08-04)
+
+### Fix
+
+- **filter_without_category**: fix
+
 ## v0.6.0 (2025-08-04)
 
 ### Feat
