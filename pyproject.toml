@@ -18,7 +18,14 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = [
+    "pytest",
+    "black",
+    "isort",
+    "ruff",
+    "mypy",
+    "types-requests"
+]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -40,6 +47,7 @@ line_length = 88
 python_version = "3.11"
 strict = true
 ignore_missing_imports = true
+exclude = ["build"]
 
 [tool.ruff]
 line-length = 88

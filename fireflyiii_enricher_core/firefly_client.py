@@ -163,11 +163,19 @@ class FireflyClient:
             raise RuntimeError(f"Request failed: {exc}") from exc
 
     def fetch_transactions(
-        self, tx_type: str = "withdrawal", limit: int = 1000
+        self,
+        tx_type: str = "withdrawal",
+        limit: int = 1000,
+        start_date: date | None = None,
+        end_date: date | None = None,
     ) -> List[Dict[str, Any]]:
         """Retrieve transactions of the given type."""
         url = f"{self.base_url}/api/v1/transactions"
         params = {"limit": limit, "type": tx_type}
+        if start_date:
+            params["start"] = start_date.isoformat()
+        if end_date:
+            params["end"] = end_date.isoformat()
         page = 1
         transactions: List[Dict[str, Any]] = []
 
