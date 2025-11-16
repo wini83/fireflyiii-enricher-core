@@ -1,3 +1,9 @@
+## v0.7.0 (2025-11-16)
+
+### Feat
+
+- **fetch_categories**: added conditional start and end date parameters (for server side filtering)
+
 ## v0.6.1 (2025-08-04)
 
 ### Fix

@@ -1,6 +1,6 @@
 [project]
 name = "fireflyiii-enricher-core"
-version = "0.6.1"
+version = "0.7.0"
 description = "A core library for enriching Firefly III transactions"
 authors = [{ name = "wini83", email = "rico.gotti@gmail.com" }]
 readme = "README.md"
@@ -24,12 +24,13 @@ dev = [
     "isort",
     "ruff",
     "mypy",
-    "types-requests"
+    "types-requests",
+    "commitizen"
 ]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.6.1"
+version = "0.7.0"
 tag_format = "v$version"
 version_files = ["pyproject.toml"]
 update_changelog_on_bump = true
